@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CANDIDATES 10
+#define MAX_VOTERS 100
+
+struct candidate {
+    char name[50];
+    int votes;
+};
+
+char* voters[] = {"AAA", "BBB", "CCC","DDD","EEE","FFF","GGG"}; // default list of voters
+int num_voters = 7;
+
+int main() {
+    struct candidate candidates[MAX_CANDIDATES];
+    int num_candidates, i, j;
+
+    // Get number of candidates
+    printf("Enter the number of candidates: ");
+    scanf("%d", &num_candidates);
+
+    // Get candidate names
+    for (i = 0; i < num_candidates; i++) {
+        printf("Enter candidate %d name: ", i + 1);
+        scanf("%s", candidates[i].name);
+        candidates[i].votes = 0;
+    }
+
+    // Show list of voters
+    printf("\nList of voters:\n");
+    for (i = 0; i < num_voters; i++) {
+        printf("%s\n", voters[i]);
+    }
+    printf("\n");
+
+    // Allow voters to vote
+    int num_votes_cast = 0;
+    char voted_voters[MAX_VOTERS][50]; // array to store voted voters
+    while (num_votes_cast < num_voters) {
+        char voter[50];
+        printf("Enter voter name: ");
+        scanf("%s", voter);
+
+        // Check if voter is in default list and has not already voted
+        int valid_voter = 0;
+        int has_voted = 0;
+        for (i = 0; i < num_voters; i++) {
+            if (strcmp(voters[i], voter) == 0) {
+                valid_voter = 1;
+                break;
+            }
+        }
+        for (i = 0; i < num_votes_cast; i++) {
+            if (strcmp(voted_voters[i], voter) == 0) {
+                has_voted = 1;
+                break;
+            }
+        }
+
+        if (valid_voter && !has_voted) {
+            // Display list of candidates
+            printf("List of candidates:\n");
+            for (j = 0; j < num_candidates; j++) {
+                printf("%d. %s\n", j + 1, candidates[j].name);
+            }
+
+            // Get vote
+            int vote;
+            printf("Enter your vote: ");
+            scanf("%d", &vote);
+
+            if (vote >= 1 && vote <= num_candidates) {
+                candidates[vote - 1].votes++;
+                printf("Thank you for casting your vote.\n");
+                strcpy(voted_voters[num_votes_cast], voter);
+                num_votes_cast++;
+            } else {
+                printf("Invalid vote.\n");
+            }
+        } else if (!valid_voter) {
+            printf("Invalid voter.\n");
+        } else if (has_voted) {
+            printf("You have already voted.\n");
+        }
+    }
+
+    // Display results
+    printf("\nElection results:\n");
+    for (i = 0; i < num_candidates; i++) {
+        printf("%s received %d votes.\n", candidates[i].name, candidates[i].votes);
+    }
+
+    return 0;
+}
